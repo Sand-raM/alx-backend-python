@@ -1,0 +1,14 @@
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO users (name, email, age) VALUES
+('Alice Wonderland', 'alice@gmail.com', 30),
+('John Doe', 'johndoe@gmail.com', 25),
+('Jane Smith', 'janesmith@gmail.com', 40),
+('Elder Oaks', 'elderoaks@gmail.com', 50);

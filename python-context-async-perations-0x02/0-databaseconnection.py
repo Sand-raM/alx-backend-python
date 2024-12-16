@@ -34,8 +34,8 @@ class DatabaseConnection:
 if __name__ == "__main__":
     db_config = {
         "host": "localhost",
-        "user": "GabieSE",
-        "password": "Shmurdaa3",
+        "user": "",
+        "password": "",
         "database": "ALX_prodev"
         }
 

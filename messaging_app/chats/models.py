@@ -39,5 +39,8 @@ class Message(models.Model):
     def __str__(self):
         return f"Message {self.message_id} by {self.sender.first_name}"
 
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 

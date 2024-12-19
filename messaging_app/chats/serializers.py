@@ -2,16 +2,14 @@ from rest_framework import serializers
 from .models import User, Message, Conversation
 
 # Serializer for the User model.
-# This serializer handles the serialization and deserialization of the User model.
-# It ensures data related to users (e.g., creating a new user, updating a user) is validated and formatted properly.
 class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_full_name', read_only=True)  # Custom field example
+
     class Meta:
         model = User
-        fields = ['user_id', 'firstname', 'last_name', 'email','phone_number', 'role', 'created_at' ]
+        fields = ['user_id', 'first_name', 'last_name', 'email', 'phone_number', 'role', 'created_at', 'full_name']
 
 # Serializer for the Message model.
-# This serializer is responsible for validating and formatting message data.
-# It supports the relationship between a message and its sender or conversation.
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
 
@@ -20,12 +18,21 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ['message_id', 'sender', 'message_body', 'sent_at']
 
 # Serializer for the Conversation model.
-# This serializer includes nested data, linking participants and messages within a conversation.
-# It is crucial for retrieving conversation details with all associated messages.
 class ConversationSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, ready_only=True) # Many-to-many relationship
-    messages = MessageSerializer(many=True, read_only=True) # One-to-many relationship
+    participants = UserSerializer(many=True, read_only=True)  # Many-to-many relationship
+    messages = MessageSerializer(many=True, read_only=True)  # One-to-many relationship
+    message_count = serializers.SerializerMethodField()  # Custom field for message count
 
     class Meta:
         model = Conversation
-        fields = ['conversation_id', 'participants', 'messages', 'created_at']
+        fields = ['conversation_id', 'participants', 'messages', 'message_count', 'created_at']
+
+    def get_message_count(self, obj):
+        # Custom logic to count the number of messages in a conversation
+        return obj.messages.count()
+
+    def validate(self, data):
+        # Custom validation example
+        if not data.get('participants'):
+            raise serializers.ValidationError("A conversation must have at least one participant.")
+        return data

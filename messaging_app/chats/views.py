@@ -7,6 +7,7 @@ from .serializers import ConversationSerializer, MessageSerializer
 from rest_framework import filters
 from .permissions import IsOwner, IsAuthenticatedAndParticipant
 from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
@@ -45,3 +46,5 @@ class MessageViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+def home(request):
+    return JsonResponse({"message": "Welcome to the Messaging App API!"})

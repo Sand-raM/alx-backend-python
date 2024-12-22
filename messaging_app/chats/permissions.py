@@ -28,3 +28,16 @@ class IsAuthenticatedAndParticipant(BasePermission):
 
         return False
 
+
+class IsParticipantOfConversation(BasePermission):
+    """
+    Custom permission to allow only participants of a conversation to perform actions.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Ensure the user is authenticated
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        # Check if the user is a participant of the conversation
+        return obj.participants.filter(id=request.user.id).exists()

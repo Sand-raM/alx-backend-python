@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
-from ..chats.auth import CustomTokenObtainPairView
+from chats.auth import CustomTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
-from ..chats.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -10,5 +9,4 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('', home, name='home'),
 ]

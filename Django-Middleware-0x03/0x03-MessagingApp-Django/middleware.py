@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 import time
 from django.http import HttpResponseForbidden
@@ -7,15 +8,19 @@ class RequestLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
+        # Create the log file if it doesn't exist
+        if not os.path.exists("requests.log"):
+            with open("requests.log", "w"):
+                pass
+
     def __call__(self, request):
-        user = request.user if request.user.is_authenticated else 'Anonymous'
-        log_message = f"{datetime.datetime.now()} - User: {user} - Path: {request.path}"
+        # Open the log file in append mode
+        with open("requests.log", "a") as log_file:
+            log_file.write(f"{datetime.now()} - User: {request.user} - Path: {request.path}\n")
 
-        log_file_path = os.path.join(os.path.dirname(__file__), 'requests.log')
-        with open(log_file_path, "a") as log_file:
-            log_file.write(log_message + "\n")
-
+        # Continue processing the request
         response = self.get_response(request)
+
         return response
     
 

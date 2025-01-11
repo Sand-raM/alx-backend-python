@@ -1,17 +1,17 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Message
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from .models import Message
 
-@login_required
-def inbox_view(request):
-    # Use the custom manager to get unread messages for the logged-in user
-    unread_messages = Message.unread_messages.unread_for_user(request.user)
-    
-    return render(request, 'messaging/inbox.html', {'unread_messages': unread_messages})
+@cache_page(60)  # Cache this view for 60 seconds
+def conversation_list(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    messages = Message.objects.filter(receiver=user).select_related('sender', 'parent_message').prefetch_related('replies')
+    return render(request, 'messaging/conversation_list.html', {'messages': messages})
 
-
-@cache_page(60)  # Cache timeout set to 60 seconds
-def conversation_view(request, conversation_id):
-    messages = Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
-    return render(request, 'messaging/conversation.html', {'messages': messages})
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+    return render(request, 'messaging/user_deleted.html')

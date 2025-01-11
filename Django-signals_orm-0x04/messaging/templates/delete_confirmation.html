@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Account Confirmation</title>
+</head>
+<body>
+    <h1>Are you sure you want to delete your account?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete My Account</button>
+    </form>
+    <a href="{% url 'profile' %}">No, Take Me Back</a>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- messaging/templates/messaging/conversation.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation</title>
+</head>
+<body>
+    <h1>Conversation Messages</h1>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>
+                    <strong>{{ message.sender.username }}</strong>: {{ message.content }}<br>
+                    <small>Sent at: {{ message.timestamp }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No messages in this conversation.</p>
+    {% endif %}
+</body>
+</html>

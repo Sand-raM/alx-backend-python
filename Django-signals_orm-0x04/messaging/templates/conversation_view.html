@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation</title>
+</head>
+<body>
+    <h1>Conversation Thread</h1>
+    {% for message, replies in grouped_messages.items %}
+        <div>
+            <p><strong>{{ message.sender.username }} to {{ message.receiver.username }}:</strong> {{ message.content }}</p>
+            <p><small>Sent at: {{ message.timestamp }}</small></p>
+            <div style="margin-left: 20px;">
+                <h3>Replies:</h3>
+                {% for reply in replies %}
+                    <div>
+                        <p><strong>{{ reply.sender.username }} to {{ reply.receiver.username }}:</strong> {{ reply.content }}</p>
+                        <p><small>Sent at: {{ reply.timestamp }}</small></p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</body>
+</html>

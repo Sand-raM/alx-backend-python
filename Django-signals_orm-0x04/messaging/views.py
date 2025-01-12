@@ -24,9 +24,9 @@ def delete_user(request):
 @login_required
 def message_list(request):
     """
-    View to display all messages in a conversation, optimized with prefetch_related and select_related.
+    View to display all messages sent by the logged-in user.
     """
-    messages = Message.objects.filter(receiver=request.user).select_related('sender', 'receiver').prefetch_related('replies')
+    messages = Message.objects.filter(sender=request.user).select_related('receiver').prefetch_related('replies')
     return render(request, 'messaging/message_list.html', {'messages': messages})
 
 @login_required

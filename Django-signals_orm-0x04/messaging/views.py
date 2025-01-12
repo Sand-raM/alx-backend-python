@@ -2,9 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from .models import Message, Notification
 
 @login_required
+@cache_page(60)
 def unread_messages(request):
     """
     View to display unread messages for the logged-in user.
@@ -13,6 +15,7 @@ def unread_messages(request):
     return render(request, 'messaging/unread_messages.html', {'unread_msgs': unread_msgs})
 
 @login_required
+@cache_page(60)
 def delete_user(request):
     """
     View to delete a user account and all related data.
@@ -22,6 +25,7 @@ def delete_user(request):
     return HttpResponseRedirect(reverse('homepage'))
 
 @login_required
+@cache_page(60)
 def message_list(request):
     """
     View to display all messages sent by the logged-in user.
@@ -30,6 +34,7 @@ def message_list(request):
     return render(request, 'messaging/message_list.html', {'messages': messages})
 
 @login_required
+@cache_page(60)
 def message_thread(request, message_id):
     """
     View to display a message and its threaded replies.

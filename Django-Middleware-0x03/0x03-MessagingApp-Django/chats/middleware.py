@@ -4,6 +4,7 @@ import os
 import time
 from django.http import HttpResponseForbidden
 
+# Middleware for logging user requests
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -16,22 +17,21 @@ class RequestLoggingMiddleware:
     def __call__(self, request):
         # Open the log file in append mode
         with open("requests.log", "a") as log_file:
-            log_file.write(f"{datetime.now()} - User: {request.user} - Path: {request.path}\n")
+            log_file.write(f"{datetime.datetime.now()} - User: {request.user if request.user.is_authenticated else 'Anonymous'} - Path: {request.path}\n")
 
         # Continue processing the request
         response = self.get_response(request)
-
         return response
-    
 
+# Middleware for restricting access based on time
 class RestrictAccessByTimeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        current_time = datetime.now().time()
-        start_time = datetime.strptime("21:00", "%H:%M").time()  # 9 PM
-        end_time = datetime.strptime("06:00", "%H:%M").time()    # 6 AM
+        current_time = datetime.datetime.now().time()
+        start_time = datetime.datetime.strptime("21:00", "%H:%M").time()  # 9 PM
+        end_time = datetime.datetime.strptime("06:00", "%H:%M").time()    # 6 AM
 
         # Restrict access if the current time is not between 9 PM and 6 AM
         if not (current_time >= start_time or current_time <= end_time):
@@ -39,8 +39,8 @@ class RestrictAccessByTimeMiddleware:
 
         response = self.get_response(request)
         return response
-    
 
+# Middleware to block offensive language and limit messages
 class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -74,8 +74,8 @@ class OffensiveLanguageMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
-    
 
+# Middleware to check user roles
 class RolePermissionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

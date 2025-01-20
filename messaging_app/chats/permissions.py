@@ -1,43 +1,34 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework import permissions
 
+class IsParticipantOfConversation(permissions.BasePermission):
+    """
+    Custom permission to only allow participants of a conversation to interact with it.
+    """
+    def has_permission(self, request, view):
+        # Allow only authenticated users
+        return bool(request.user and request.user.is_authenticated)
 
-class IsOwner(BasePermission):
-    """
-    Custom permission to check if the user is the owner of the object.
-    """
     def has_object_permission(self, request, view, obj):
-        # Check if the user is the owner of the conversation or message
-        return obj.owner == request.user
-
-class IsAuthenticatedAndParticipant(BasePermission):
-    """
-    Custom permission to ensure the user is authenticated and is a participant
-    of the conversation.
-    """
-    def has_object_permission(self, request, view, obj):
-        # Ensure user is authenticated
-        if not request.user.is_authenticated:
-            return False
-
-        # Check if user is a participant of the conversation
-        if hasattr(obj, 'participants'):  # For conversation objects
-            return request.user in obj.participants.all()
-
-        if hasattr(obj, 'conversation'):  # For message objects
-            return request.user in obj.conversation.participants.all()
-
+        # Allow only participants to access the conversation
+        if hasattr(obj, 'participants_id'):
+            return request.user in obj.participants_id.all()
+        # For messages, check if user is participant in the conversation
+        if hasattr(obj, 'conversation'):
+            return request.user in obj.conversation.participants_id.all()
         return False
 
-
-class IsParticipantOfConversation(BasePermission):
+class IsOwnerOrReadOnly(permissions.BasePermission):
     """
-    Custom permission to allow only participants of a conversation to perform actions.
+    Custom permission to only allow owners of a message to edit it.
     """
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        # Ensure the user is authenticated
-        if not request.user or not request.user.is_authenticated:
-            return False
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
 
-        # Check if the user is a participant of the conversation
-        return obj.participants.filter(id=request.user.id).exists()
+        # Write permissions are only allowed to the owner of the message
+        return obj.sender_id == request.user 

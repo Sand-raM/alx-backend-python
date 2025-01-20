@@ -1,21 +1,49 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import get_user_model
+from .serializers import UserSerializer
 
+User = get_user_model()
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    """
-    Custom Token View to add extra information like user details in response.
-    """
+    """Custom token view that returns user data along with tokens"""
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        token_data = response.data
+        if response.status_code == 200:
+            user = User.objects.get(email=request.data['email'])
+            user_data = UserSerializer(user).data
+            response.data.update({
+                'user': user_data,
+                'status': 'success'
+            })
+        return response
 
-        # Include user-specific details
-        user = self.request.user
-        token_data.update({
-            'user_id': user.id,
-            'email': user.email,
-        })
-        return Response(token_data, status=status.HTTP_200_OK)
+class LogoutView(APIView):
+    """Blacklist the refresh token to logout"""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh_token')
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({
+                    'status': 'success',
+                    'message': 'Successfully logged out'
+                }, status=status.HTTP_200_OK)
+            return Response({
+                'status': 'error',
+                'message': 'Refresh token is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST) 

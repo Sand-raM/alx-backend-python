@@ -2,24 +2,32 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_NAME=${MYSQL_DB}
+      - DATABASE_USER=${MYSQL_USER}
+      - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - DATABASE_HOST=db
     depends_on:
       - db
-    env_file:
-      - .env
 
   db:
-    image: mysql:5.7
+    image: mysql:8.0
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD=Shmurdaa3
+      MYSQL_DATABASE=messaging_app_db
+      MYSQL_USER=gabi3slowmo
+      MYSQL_PASSWORD=Shmurdaa3
+    ports:
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 

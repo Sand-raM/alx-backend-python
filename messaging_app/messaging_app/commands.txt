@@ -1,0 +1,2 @@
+# Apply the Ingress configuration
+kubectl apply -f messaging_app/ingress.yaml

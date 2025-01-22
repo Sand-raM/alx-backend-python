@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Check if kubectl is installed
+if ! command -v kubectl &> /dev/null; then
+    echo "kubectl is not installed. Please install kubectl and try again."
+    exit 1
+fi
+
+# Check if wrk is installed for load testing
+if ! command -v wrk &> /dev/null; then
+    echo "wrk is not installed. Please install wrk and try again."
+    exit 1
+fi
+
+# Scale the Django app to 3 replicas
+echo "Scaling Django app deployment to 3 replicas..."
+kubectl scale deployment messaging-app-deployment --replicas=3
+
+# Verify that the app is scaled and running multiple pods
+echo "Verifying the pods..."
+kubectl get pods
+
+# Perform load testing on the app
+echo "Performing load testing using wrk..."
+wrk -t4 -c100 -d30s http://<your-cluster-ip>:8000
+
+# Monitor resource usage of the app
+echo "Monitoring resource usage..."
+kubectl top pod
+
+echo "Script completed successfully."

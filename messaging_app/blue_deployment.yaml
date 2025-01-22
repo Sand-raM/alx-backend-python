@@ -1,0 +1,20 @@
+# blue_deployment.yaml (representing the current live version)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+        - name: django-app
+          image: your-docker-image:blue-version
+          ports:
+            - containerPort: 8000

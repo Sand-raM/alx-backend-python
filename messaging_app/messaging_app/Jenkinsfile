@@ -2,21 +2,24 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = 'https://github.com/yourusername/alx-backend-python.git'
-        BRANCH = 'main'
+        GIT_REPO = 'https://github.com/Sand-raM/alx-backend-python.git'
+        BRANCH = 'main'  // Replace with your actual branch name if different
+        GITHUB_CREDENTIALS = 'github-credentials-id'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${BRANCH}", url: "${GIT_REPO}"
+                // Checkout code from GitHub using credentials
+                git credentialsId: "${GITHUB_CREDENTIALS}", branch: "${BRANCH}", url: "${GIT_REPO}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'pip install -r requirements.txt'
+                    // Install dependencies from the requirements.txt file
+                    sh 'pip3 install -r messaging_app/requirements.txt'
                 }
             }
         }
@@ -24,6 +27,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
+                    // Run pytest tests
                     sh 'pytest --maxfail=1 --disable-warnings -q'
                 }
             }
@@ -32,6 +36,7 @@ pipeline {
         stage('Generate Report') {
             steps {
                 script {
+                    // Generate test report with pytest
                     sh 'pytest --maxfail=1 --disable-warnings --html=report.html'
                 }
             }

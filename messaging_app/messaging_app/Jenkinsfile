@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_REPO = 'https://github.com/Sand-raM/alx-backend-python.git'
-        BRANCH = 'master'
+        BRANCH = 'main'
         GITHUB_CREDENTIALS = 'github-credentials-id'
     }
 
@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from GitHub using credentials
-                git credentialsId: "${GITHUB_CREDENTIALS}", branch: "${BRANCH}", url: "${GIT_REPO}"
+                git branch: 'main', credentialsId: "${GITHUB_CREDENTIALS}", url: "${GIT_REPO}"
             }
         }
 

@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_REPO = 'https://github.com/Sand-raM/alx-backend-python.git'
-        BRANCH = 'main'  // Replace with your actual branch name if different
+        BRANCH = 'master'
         GITHUB_CREDENTIALS = 'github-credentials-id'
     }
 

@@ -16,7 +16,7 @@ services:
       MYSQL_PORT: 3306
       MYSQL_USER: gabi3slowmo
       MYSQL_PASSWORD: Shmurdaa3
-      MYSQL_DATABASE: messaging_app_db
+      MYSQL_DB: messaging_app_db
     depends_on:
       - db
 

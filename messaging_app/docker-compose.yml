@@ -26,7 +26,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: messaging_app_db
+      MYSQL_D: messaging_app_db
       MYSQL_USER: gabi3slowmo
       MYSQL_PASSWORD: Shmurdaa3
     volumes:

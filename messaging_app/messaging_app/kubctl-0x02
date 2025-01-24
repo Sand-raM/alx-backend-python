@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Deploy the Blue version
+kubectl apply -f messaging_app/blue_deployment.yaml
+
+# Deploy the Green version
+kubectl apply -f messaging_app/green_deployment.yaml
+
+# Check if both versions are deployed successfully
+kubectl get deployments
+
+# Check logs for the Green version deployment
+kubectl logs -f deployment/django-app-green
+
+# Switch traffic to Green version by scaling replicas
+kubectl scale --replicas=0 deployment/django-app-blue
+kubectl scale --replicas=1 deployment/django-app-green
+
+# Verify the scaling and traffic shift
+kubectl get pods

@@ -7,7 +7,7 @@ services:
     container_name: messaging_app_web
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/app
+      - .:/app  # Make sure this is correct for your project structure
     ports:
       - "8000:8000"
     environment:
